@@ -3,10 +3,9 @@ const app = express();
 app.use(express.json());
 require("dotenv").config();
 const PORT = process.env.PORT;
+const moviesRoutes = require("./routes/moviesRoute");
 
-app.get("/", (req, res) => {
-  res.send("Homepage");
-});
+app.use("/api/movies", moviesRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
