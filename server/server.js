@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json());
 require("dotenv").config();
 const PORT = process.env.PORT;
-const moviesRoutes = require("./routes/moviesRoute");
+const moviesRoutes = require("./routes/movieRoute");
 
 app.use("/api/movies", moviesRoutes);
 

@@ -1,4 +1,4 @@
-const getMovies = require("../controllers/getMovies");
+const getMovies = require("../controllers/movieController");
 const express = require("express");
 const router = express.Router();
 
