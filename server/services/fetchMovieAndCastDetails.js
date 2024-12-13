@@ -15,7 +15,12 @@ const fetchMovieAndCastDetails = async (query) => {
         );
         const actorNames = actorsDetails.data.cast
           .filter((actor) => actor.known_for_department === "Acting")
-          .map((actor) => actor.name);
+          .reduce((acc, actor) => {
+            if (acc.length < 6) {
+              acc.push(actor.name);
+            }
+            return acc;
+          }, []);
         return {
           title: movie.title,
           tmdbId: movie.id,
