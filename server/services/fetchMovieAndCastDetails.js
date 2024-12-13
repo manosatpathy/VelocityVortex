@@ -1,7 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 
-const searchMovies = async (query) => {
+const fetchMovieAndCastDetails = async (query) => {
   try {
     const movieDetails = await axios.get(
       `https://api.themoviedb.org/3/search/movie?query=${query}&api_key=${process.env.API_KEY}`
@@ -33,4 +33,4 @@ const searchMovies = async (query) => {
   }
 };
 
-module.exports = searchMovies;
+module.exports = fetchMovieAndCastDetails;

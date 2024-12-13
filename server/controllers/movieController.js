@@ -1,8 +1,8 @@
-const searchMovies = require("../services/searchMovies");
+const fetchMovieAndCastDetails = require("../services/fetchMovieAndCastDetails");
 const getMovies = async (req, res) => {
   try {
     const query = req.query.query;
-    const movies = await searchMovies(query);
+    const movies = await fetchMovieAndCastDetails(query);
     if (!movies || movies.length === 0) {
       return res.status(404).json({ movies: [], message: "No movies found" });
     }
