@@ -5,7 +5,7 @@ require("dotenv").config();
 const PORT = process.env.PORT;
 const { sequelize } = require("./models");
 const movieRoutes = require("./routes/movieRoute");
-const curatedListRoutes = require("./routes/cureatedListRoute");
+const curatedListRoutes = require("./routes/curatedListRoute");
 
 app.use("/api/movies", movieRoutes);
 app.use("/api/curated-lists", curatedListRoutes);
