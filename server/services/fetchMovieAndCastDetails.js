@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { Movie } = require("../models");
 require("dotenv").config();
 
 const fetchMovieAndCastDetails = async (query) => {
@@ -24,14 +25,15 @@ const fetchMovieAndCastDetails = async (query) => {
         return {
           title: movie.title,
           tmdbId: movie.id,
-          genre: movie.genre_ids,
-          actors: actorNames,
-          releaseYear: movie.release_date.slice(0, 4),
+          genre: movie.genre_ids.length > 0 ? movie.genre_ids : null,
+          actors: actorNames.length > 0 ? actorNames : null,
+          releaseYear: +movie.release_date.slice(0, 4),
           rating: movie.vote_average,
           description: movie.overview,
         };
       })
     );
+    await Movie.bulkCreate(result);
     return { movies: result };
   } catch (err) {
     throw err;
