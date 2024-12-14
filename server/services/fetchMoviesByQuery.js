@@ -1,17 +1,17 @@
-const axios = require("axios");
+const apiClient = require("../utils/axiosInstance");
 require("dotenv").config();
 
 const fetchMoviesByQuery = async (query) => {
   try {
-    const movieDetails = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?query=${query}&api_key=${process.env.API_KEY}`
+    const movieDetails = await apiClient.get(
+      `/search/movie?query=${query}&api_key=${process.env.API_KEY}`
     );
     const movies = movieDetails.data.results;
 
     const result = await Promise.all(
       movies.map(async (movie) => {
-        const actorsDetails = await axios.get(
-          `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${process.env.API_KEY}`
+        const actorsDetails = await apiClient.get(
+          `/movie/${movie.id}/credits?api_key=${process.env.API_KEY}`
         );
         const actorNames = actorsDetails.data.cast
           .filter((actor) => actor.known_for_department === "Acting")
