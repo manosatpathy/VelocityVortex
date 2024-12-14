@@ -1,14 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
-  const Wishlist = sequelize.define("Wishlist", {
-    movieId: {
-      type: DataTypes.INTEGER,
-      references: { model: "Movies", key: "id" },
+  const Wishlist = sequelize.define(
+    "Wishlist",
+    {
+      movieId: {
+        type: DataTypes.INTEGER,
+        references: { model: "Movies", key: "id" },
+      },
+      addedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    addedAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-  });
-
+    {
+      tableName: "wishlists",
+    }
+  );
   return Wishlist;
 };
