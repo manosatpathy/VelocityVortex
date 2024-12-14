@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { Movie } = require("../models");
 require("dotenv").config();
 
 const fetchMovieAndCastDetails = async (query) => {
@@ -33,7 +32,6 @@ const fetchMovieAndCastDetails = async (query) => {
         };
       })
     );
-    await Movie.bulkCreate(result);
     return { movies: result };
   } catch (err) {
     throw err;
