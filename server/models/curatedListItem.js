@@ -4,11 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       curatedListId: {
         type: DataTypes.INTEGER,
-        references: { model: "CuratedLists", key: "id" },
+        references: { model: "curatedLists", key: "id" },
       },
       movieId: {
         type: DataTypes.INTEGER,
-        references: { model: "Movies", key: "id" },
+        references: { model: "movies", key: "id" },
       },
       addedAt: {
         type: DataTypes.DATE,
@@ -19,5 +19,16 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "curatedListItems",
     }
   );
+
+  CuratedListItem.associate = (models) => {
+    CuratedListItem.belongsTo(models.CuratedList, {
+      foreignKey: "curatedListId",
+      as: "curatedList",
+    });
+    CuratedListItem.belongsTo(models.Movie, {
+      foreignKey: "movieId",
+      as: "movie",
+    });
+  };
   return CuratedListItem;
 };

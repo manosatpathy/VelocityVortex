@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     "CuratedList",
     {
       name: DataTypes.STRING,
-      slug: DataTypes.STRING, // For public access
+      slug: DataTypes.STRING,
       description: DataTypes.STRING,
       createdAt: {
         type: DataTypes.DATE,
@@ -14,5 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "curatedLists",
     }
   );
+  CuratedList.associate = (models) => {
+    CuratedList.hasMany(models.CuratedListItem, {
+      foreignKey: "curatedListId",
+      as: "curatedListItems",
+    });
+  };
   return CuratedList;
 };

@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       movieId: {
         type: DataTypes.INTEGER,
-        references: { model: "Movies", key: "id" },
+        references: { model: "movies", key: "id" },
       },
       addedAt: {
         type: DataTypes.DATE,
@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "watchlists",
     }
   );
+
+  Watchlist.associate = (models) => {
+    Watchlist.belongsTo(models.Movie, { foreignKey: "movieId", as: "movie" });
+  };
 
   return Watchlist;
 };

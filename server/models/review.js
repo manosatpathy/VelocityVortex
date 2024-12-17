@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       movieId: {
         type: DataTypes.INTEGER,
-        references: { model: "Movies", key: "id" },
+        references: { model: "movies", key: "id" },
       },
       rating: DataTypes.FLOAT, // User rating
       reviewText: DataTypes.STRING, // User review
@@ -17,5 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "reviews",
     }
   );
+
+  Review.associate = (models) => {
+    Review.belongsTo(models.Movie, { foreignKey: "movieId", as: "movie" });
+  };
   return Review;
 };
