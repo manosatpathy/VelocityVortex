@@ -1,4 +1,4 @@
-const { WatchList } = require("../models");
+const { Watchlist } = require("../models");
 const doesMovieExist = require("../services/doesMovieExists");
 const fetchMovieAndCast = require("../services/fetchMovieAndCast");
 
@@ -9,7 +9,7 @@ const saveToWatchList = async (req, res) => {
       return res.status(400).json({ message: "movie id is required" });
     }
 
-    const movieInWatchList = await WatchList.findOne({ where: { movieId } });
+    const movieInWatchList = await Watchlist.findOne({ where: { movieId } });
     if (movieInWatchList) {
       return res
         .status(400)
@@ -22,9 +22,9 @@ const saveToWatchList = async (req, res) => {
       if (!savedMovie.valid) {
         throw new Error("Error saving movie data into database");
       }
-      await WatchList.create({ movieId: savedMovie.id });
+      await Watchlist.create({ movieId: savedMovie.id });
     } else {
-      await WatchList.create({ movieId: movie.id });
+      await Watchlist.create({ movieId: movie.id });
     }
 
     return res
@@ -36,5 +36,22 @@ const saveToWatchList = async (req, res) => {
       .json({ message: "Error adding movie to watchlist", error: err.message });
   }
 };
+
+// const searchMoviesByGenreAndActor = async (req, res) => {
+//   const { genre, actor } = req.query;
+//   try {
+//     const movies = await Movie.findAll({
+//       where: { genre, actor },
+//     });
+//     const watchedMovies = WatchList.findAll({
+//       where: { movieId: { [Op.in]: movies.id } },
+//     });
+//     const watchMovieDetails = mov;
+//   } catch (err) {
+//     return res
+//       .status(500)
+//       .json({ message: "Error searching movies", error: err.message });
+//   }
+// };
 
 module.exports = saveToWatchList;
