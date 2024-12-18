@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       title: DataTypes.STRING,
       tmdbId: DataTypes.INTEGER, // TMDB Movie ID
       genre: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: true,
       },
       actors: {
