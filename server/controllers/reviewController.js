@@ -1,3 +1,4 @@
+const { Review } = require("../models");
 const addReviewsToMovies = async (req, res) => {
   const movieId = req.params.movieId;
   const { rating, reviewText } = req.body;
@@ -19,3 +20,5 @@ const addReviewsToMovies = async (req, res) => {
       .json({ message: "Error adding reviews to movies.", err: err.message });
   }
 };
+
+module.exports = addReviewsToMovies;
