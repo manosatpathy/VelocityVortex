@@ -1,4 +1,4 @@
-const { WishList } = require("../models");
+const { Wishlist } = require("../models");
 const doesMovieExist = require("../services/doesMovieExists");
 const fetchMovieAndCast = require("../services/fetchMovieAndCast");
 
@@ -9,7 +9,7 @@ const saveToWishList = async (req, res) => {
       return res.status(400).json({ message: "movie id is required" });
     }
 
-    const movieInWishList = await WishList.findOne({ where: { movieId } });
+    const movieInWishList = await Wishlist.findOne({ where: { movieId } });
     if (movieInWishList) {
       return res
         .status(400)
@@ -22,9 +22,9 @@ const saveToWishList = async (req, res) => {
       if (!savedMovie.valid) {
         throw new Error("Error saving movie data into database");
       }
-      await WishList.create({ movieId: savedMovie.id });
+      await Wishlist.create({ movieId: savedMovie.id });
     } else {
-      await WishList.create({ movieId: movie.id });
+      await Wishlist.create({ movieId: movie.id });
     }
 
     return res
