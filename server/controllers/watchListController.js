@@ -37,21 +37,4 @@ const saveToWatchList = async (req, res) => {
   }
 };
 
-// const searchMoviesByGenreAndActor = async (req, res) => {
-//   const { genre, actor } = req.query;
-//   try {
-//     const movies = await Movie.findAll({
-//       where: { genre, actor },
-//     });
-//     const watchedMovies = WatchList.findAll({
-//       where: { movieId: { [Op.in]: movies.id } },
-//     });
-//     const watchMovieDetails = mov;
-//   } catch (err) {
-//     return res
-//       .status(500)
-//       .json({ message: "Error searching movies", error: err.message });
-//   }
-// };
-
 module.exports = saveToWatchList;
