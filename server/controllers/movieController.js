@@ -1,9 +1,10 @@
+const { Op } = require("sequelize");
 const {
   Movie,
   Watchlist,
   Wishlist,
   CuratedListItem,
-  CuratedList,
+  Review,
 } = require("../models");
 const fetchMoviesByQuery = require("../services/fetchMoviesByQuery");
 
@@ -24,7 +25,7 @@ const getMovies = async (req, res) => {
 
 const searchMoviesByGenreAndActor = async (req, res) => {
   const { genre, actor, listType } = req.query;
-  const allowedListTypes = ["wishList", "watchlist", "curatedList"];
+  const allowedListTypes = ["wishlist", "watchlist", "curatedList"];
   try {
     if (!genre || !actor || !listType) {
       return res
@@ -38,9 +39,11 @@ const searchMoviesByGenreAndActor = async (req, res) => {
           "Invalid listType. Valid options are: wishList, watchlist, curatedList.",
       });
     }
-
     const movies = await Movie.findAll({
-      where: { genre, actors: { [Op.contains]: [actor] } },
+      where: {
+        genre: { [Op.contains]: [genre] },
+        actors: { [Op.contains]: [actor] },
+      },
       attributes: ["id"],
     });
 
@@ -91,7 +94,7 @@ const searchMoviesByGenreAndActor = async (req, res) => {
 const sortByRatingOrYearOfRelease = async (req, res) => {
   const { list, sortBy, order } = req.query;
   const sortField = ["rating", "yearOfRelease"];
-  const allowedLists = ["wishList", "watchlist", "curatedList"];
+  const allowedLists = ["wishlist", "watchlist", "curatedlist"];
   try {
     if (!list || !sortBy || !order) {
       return res.status(400).json({
@@ -106,17 +109,16 @@ const sortByRatingOrYearOfRelease = async (req, res) => {
     if (!allowedLists.includes(list)) {
       return res.status(400).json({
         message:
-          "Invalid listType. Valid options are: wishList, watchlist, curatedList.",
+          "Invalid listType. Valid options are: wishlist, watchlist, curatedlist.",
+      });
+    }
+    if (order !== "ASC" && order !== "DESC") {
+      return res.status(400).json({
+        message: "order can only be ASC or DESC",
       });
     }
 
-    let sortColumn;
-    if (sortBy === "rating") {
-      sortColumn = "rating";
-    } else if (sortBy === "yearOfRelease") {
-      sortColumn = "releaseYear";
-    }
-
+    const sortColumn = sortBy === "rating" ? "rating" : "releaseYear";
     let result;
 
     switch (list) {
@@ -128,7 +130,7 @@ const sortByRatingOrYearOfRelease = async (req, res) => {
         result = await Watchlist.findAll({ order: [[sortColumn, order]] });
         break;
       }
-      case "curatedList": {
+      case "curatedlist": {
         result = await CuratedListItem.findAll({
           order: [[sortColumn, order]],
         });
@@ -151,8 +153,56 @@ const sortByRatingOrYearOfRelease = async (req, res) => {
   }
 };
 
+const getTopMoviesByRating = async (req, res) => {
+  try {
+    const movies = await Movie.findAll({
+      order: [["rating", "DESC"]],
+      limit: 5,
+    });
+    const movieIds = movies.map((movie) => movie.id);
+    const reviews = await Review.findAll({
+      where: { movieId: { [Op.in]: movieIds } },
+    });
+
+    const reviewMap = reviews.reduce((acc, review) => {
+      const wordCount = review.reviewText.trim().split(/\s+/).length;
+      if (acc[review.movieId]) {
+        acc[review.movieId].push({
+          reviewText: review.reviewText,
+          wordCount: wordCount,
+        });
+      } else {
+        acc[review.movieId] = [
+          { reviewText: review.reviewText, wordCount: wordCount },
+        ];
+      }
+      return acc;
+    }, {});
+
+    const result = movies.map((movie) => {
+      const movieReview = reviewMap[movie.id];
+      return {
+        title: movie.title,
+        rating: movie.rating,
+        review: movieReview
+          ? movieReview.map((rev) => ({
+              text: rev.reviewText,
+              wordCount: rev.wordCount,
+            }))
+          : null,
+      };
+    });
+    return res.status(200).json({ movies: result });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error getting movies", error: err.message });
+  }
+};
+
 module.exports = {
   getMovies,
   searchMoviesByGenreAndActor,
   sortByRatingOrYearOfRelease,
+  getTopMoviesByRating,
 };
