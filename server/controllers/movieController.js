@@ -123,15 +123,34 @@ const sortByRatingOrYearOfRelease = async (req, res) => {
 
     switch (list) {
       case "wishlist": {
-        result = await Wishlist.findAll({ order: [[sortColumn, order]] });
+        const wishlistMovieIds = await Wishlist.findAll({
+          attributes: ["movieId"],
+        });
+        const movieIds = wishlistMovieIds.map((item) => item.movieId);
+        result = await Movie.findAll({
+          where: { id: { [Op.in]: movieIds } },
+          order: [[sortColumn, order]],
+        });
         break;
       }
       case "watchlist": {
-        result = await Watchlist.findAll({ order: [[sortColumn, order]] });
+        const watchlistMovieIds = await Watchlist.findAll({
+          attributes: ["movieId"],
+        });
+        const movieIds = watchlistMovieIds.map((item) => item.movieId);
+        result = await Movie.findAll({
+          where: { id: { [Op.in]: movieIds } },
+          order: [[sortColumn, order]],
+        });
         break;
       }
       case "curatedlist": {
-        result = await CuratedListItem.findAll({
+        const curatedListMovieIds = await CuratedListItem.findAll({
+          attributes: ["movieId"],
+        });
+        const movieIds = curatedListMovieIds.map((item) => item.movieId);
+        result = await Movie.findAll({
+          where: { id: { [Op.in]: movieIds } },
           order: [[sortColumn, order]],
         });
         break;
@@ -142,7 +161,15 @@ const sortByRatingOrYearOfRelease = async (req, res) => {
     }
 
     if (result && result.length > 0) {
-      return res.status(200).json({ movies: result });
+      const movieDetails = result.map((movie) => ({
+        title: movie.title,
+        tmdbId: movie.tmdbId,
+        genre: movie.genre,
+        actors: movie.actors,
+        releaseyear: movie.releaseyear,
+        rating: movie.rating,
+      }));
+      return res.status(200).json({ movies: movieDetails });
     } else {
       return res.status(200).json({ movies: [] });
     }
