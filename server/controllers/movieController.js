@@ -44,7 +44,6 @@ const searchMoviesByGenreAndActor = async (req, res) => {
         genre: { [Op.contains]: [genre] },
         actors: { [Op.contains]: [actor] },
       },
-      attributes: ["id"],
     });
 
     if (movies.length === 0) {
@@ -59,18 +58,21 @@ const searchMoviesByGenreAndActor = async (req, res) => {
       case "wishlist": {
         result = await Wishlist.findAll({
           where: { movieId: { [Op.in]: movieIds } },
+          attributes: ["movieId"],
         });
         break;
       }
       case "watchlist": {
         result = await Watchlist.findAll({
           where: { movieId: { [Op.in]: movieIds } },
+          attributes: ["movieId"],
         });
         break;
       }
       case "curatedList": {
         result = await CuratedListItem.findAll({
           where: { movieId: { [Op.in]: movieIds } },
+          attributes: ["movieId"],
         });
         break;
       }
@@ -80,7 +82,11 @@ const searchMoviesByGenreAndActor = async (req, res) => {
     }
 
     if (result && result.length > 0) {
-      return res.status(200).json({ movies: result });
+      const resultMovieIds = result.map((item) => item.movieId);
+      const filteredMovies = movies.filter((movie) =>
+        resultMovieIds.includes(movie.dataValues.id)
+      );
+      return res.status(200).json({ movies: filteredMovies });
     } else {
       return res.status(200).json({ movies: [] });
     }
